@@ -22,11 +22,14 @@ if is_torch_available():
 if is_accelerate_available():
     from accelerate import init_empty_weights
 
-if is_fbgemm_gpu_available():
-    import fbgemm_gpu.experimental.gen_ai  # noqa: F401
 
 logger = logging.get_logger(__name__)
 
+if is_fbgemm_gpu_available():
+    try:
+        import fbgemm_gpu.experimental.gen_ai  # noqa: F401
+    except Exception as e:
+        logger.warning(f"failed to import fbgemm_gpi.experimental.gen_ai")
 
 class FbgemmFp8Linear(torch.nn.Module):
     def __init__(self, in_features, out_features, bias, weight_dtype=torch.float32):
